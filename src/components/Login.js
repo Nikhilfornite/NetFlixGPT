@@ -3,16 +3,16 @@ import Header from './Header'
 import { checkValidData } from '../utils/validate';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,updateProfile } from "firebase/auth";
 import { auth } from '../utils/firebase';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
+import { BG_IMG } from '../utils/constants';
+import { PROFILE_IMG } from '../utils/constants';
 const Login = () => {
   const [isSignInForm,setisSignInForm] = useState(true);
   const [errorMessage,seterrorMessage] = useState(null)
   const passwordRef = useRef(null);
   const emailRef = useRef(null);
   const userNameRef = useRef(null);
-  const navigate = useNavigate();
   const dispatch = useDispatch()
   const toggleSignInForm = ()=>{
     if(userNameRef && userNameRef.current) userNameRef.current.value=""
@@ -37,12 +37,11 @@ const Login = () => {
         // Signed up 
         updateProfile(userCredential.user, {
           displayName: userNameRef.current.value, 
-          photoURL: "https://avatars.githubusercontent.com/u/169829233?v=4",
+          photoURL: PROFILE_IMG,
         }).then(() => {
           // Profile updated!
           const {uid,email,displayName,photoURL} = auth.currentUser;
           dispatch(addUser({uid:uid, email:email, displayName:displayName,photoURL:photoURL}));
-          navigate("/browse");
         }).catch((error) => {
           // An error occurred
           seterrorMessage(error.message);
@@ -61,7 +60,6 @@ if(isSignInForm){
     signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value)
     .then((userCredential) => {
     // Signed in 
-    navigate("/browse");
     // ...
   })
   .catch((error) => {
@@ -77,7 +75,7 @@ if(isSignInForm){
     <div>
       <Header/>
       <div className='absolute'>
-        <img className='brightness-50' src='https://assets.nflxext.com/ffe/siteui/vlv3/74d734ca-0eab-4cd9-871f-bca01823d872/web/IN-en-20241021-TRIFECTA-perspective_2277eb50-9da3-4fdf-adbe-74db0e9ee2cf_large.jpg' alt='Background-Image'></img>
+        <img className='brightness-50' src={BG_IMG} alt='Background-Image'></img>
       </div>
       <form onSubmit={(e)=>e.preventDefault()} className='w-3/12 p-12 absolute bg-black my-36 mx-auto right-0 left-0 text-white bg-opacity-70'>
       <h1 className='font-bold text-3xl py-4'>{isSignInForm?"Sign In":"Sign Up "}</h1>
